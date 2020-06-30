@@ -12,8 +12,6 @@ import javax.swing.ImageIcon;
  * @author jesus
  */
 public class Syringe extends Sprite{
-    private int xdir;
-    private int ydir;
     private int angle;
     private int speed;
     private int rotationSpeed = 1;
@@ -25,9 +23,6 @@ public class Syringe extends Sprite{
     }
 
     private void initGun() {
-        
-        xdir = 0;
-        ydir = 0;
         angle = Common.INIT_LANGLE; 
         x = Common.INIT_X_LPOSITION;
         y = Common.INIT_Y_GUN;
@@ -37,19 +32,16 @@ public class Syringe extends Sprite{
     }
 
     private void loadImage() {
-
         var ii = new ImageIcon("src/resources/vacuna.png");
         image = ii.getImage();
     }
 
     void move() {
-        //Movement
-        x += speed * Math.cos(angle);
-        y += speed * Math.sin(angle);
-        
+
         //Rotation
         if(direction == Common.LEFT ){
-            if(Common.INIT_LANGLE + Common.RANGE_DEGREES <= angle || Common.INIT_LANGLE - Common.RANGE_DEGREES >= angle){
+            if(Common.INIT_LANGLE + Common.RANGE_DEGREES <= angle 
+                    || Common.INIT_LANGLE - Common.RANGE_DEGREES >= angle){
                rotationSpeed = rotationSpeed * -1;
             }
         }
@@ -60,6 +52,10 @@ public class Syringe extends Sprite{
         }
         
         angle= angle + (rotationSpeed);
+        
+        //Movement
+        x = x +  (Math.cos(Math.toRadians(-angle)) * speed);
+        y = y +  (Math.sin(Math.toRadians(-angle)) * speed);
     }
     
     void keyPressed(KeyEvent e) {
@@ -80,10 +76,13 @@ public class Syringe extends Sprite{
             if(direction == Common.LEFT ){
                 direction = Common.RIGHT;
                 angle = Common.INIT_RANGLE;
+                x = Common.INIT_X_RPOSITION;
+
             }
             else if(direction == Common.RIGHT) {
                 direction = Common.LEFT;
                 angle = Common.INIT_LANGLE;
+                x = Common.INIT_X_LPOSITION;
 
             }
         }
@@ -91,9 +90,10 @@ public class Syringe extends Sprite{
         if(key == KeyEvent.VK_SPACE){
             if(rotationSpeed!=0){
                 rotationSpeed = 0;
+                speed = 2;
             }
             else {
-                rotationSpeed = 1;
+                resetState();
             }
         }
     }
@@ -101,21 +101,24 @@ public class Syringe extends Sprite{
     private void resetState() {
 
         if(direction == Common.LEFT){
+            x = Common.INIT_X_LPOSITION;        }
+        else {
             x = Common.INIT_X_RPOSITION;
         }
-        else {
-            x = Common.INIT_X_LPOSITION;
-        }
-            y = Common.INIT_Y_GUN;   
+            y = Common.INIT_Y_GUN;
+            speed = 0;
+            rotationSpeed = 1;
+
+
     }
 
-    void setXDir(int x) {
-        xdir = x;
+    void setXDir(double x) {
+        this.x = x;
     }
 
-    void setYDir(int y) {
+    void setYDir(double y) {
 
-        ydir = y;
+        this.y = y;
     }
     
     void setRotation(int angle){
@@ -126,12 +129,12 @@ public class Syringe extends Sprite{
         this.direction = direction;
     }
 
-    int getYDir() {
+    double getYDir() {
 
-        return ydir;
+        return y;
     }
     
-    int getRotation(){
+    double getRotation(){
         return angle;
     }
     

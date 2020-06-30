@@ -79,7 +79,7 @@ public class Level extends JPanel{
     
     private void drawGun(Graphics2D g2d){
         g2d.translate(gun.getX(), gun.getY());
-        g2d.rotate(Math.toRadians(gun.getRotation()),gun.getImageHeight()/2,gun.getImageWidth()/2);
+        g2d.rotate(Math.toRadians(-gun.getRotation()),gun.getImageHeight()/2,gun.getImageWidth()/2);
         g2d.drawImage(gun.getImage(),0,0,this);
     }
     

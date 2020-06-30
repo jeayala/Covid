@@ -14,8 +14,8 @@ import java.awt.Rectangle;
  */
 public class Sprite {
 
-    int x;
-    int y;
+    double x;
+    double y;
     int imageWidth;
     int imageHeight;
     Image image;
@@ -25,17 +25,17 @@ public class Sprite {
         this.x = x;
     }
 
-    int getX() {
+    double getX() {
 
         return x;
     }
 
-    protected void setY(int y) {
+    protected void setY(double y) {
 
         this.y = y;
     }
 
-    int getY() {
+    double getY() {
 
         return y;
     }
@@ -57,7 +57,7 @@ public class Sprite {
 
     Rectangle getRect() {
 
-        return new Rectangle(x, y,
+        return new Rectangle((int)x, (int)y,
                 image.getWidth(null), image.getHeight(null));
     }
 
