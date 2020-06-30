@@ -12,6 +12,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -29,6 +30,9 @@ public class Level extends JPanel{
     private boolean inGame = true;
     private Syringe gun;
     AffineTransform identity;
+    
+    
+    private Rectangle scenario = new Rectangle(Common.WIDTH - Common.SCENARIO_WIDTH, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
 
     public Level() {
         initLevel();
@@ -79,7 +83,7 @@ public class Level extends JPanel{
     
     private void drawGun(Graphics2D g2d){
         g2d.translate(gun.getX(), gun.getY());
-        g2d.rotate(Math.toRadians(-gun.getRotation()),gun.getImageHeight()/2,gun.getImageWidth()/2);
+        g2d.rotate(Math.toRadians(gun.getRotation()),gun.getImageHeight()/2,gun.getImageWidth()/2);
         g2d.drawImage(gun.getImage(),0,0,this);
     }
     
@@ -109,6 +113,8 @@ public class Level extends JPanel{
     }
 
     private void doGameCycle() {
+        gun.move();
+
         checkCollision();
         repaint();
     }
@@ -119,6 +125,11 @@ public class Level extends JPanel{
     }
 
     private void checkCollision() {
-        gun.move();
+        
+        if(gun.getRect().intersects(scenario))
+        {
+            stopGame();
+        }
+        
     }
 }

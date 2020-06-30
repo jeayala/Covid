@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package com.covid.covidgame;
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
 
@@ -54,8 +55,8 @@ public class Syringe extends Sprite{
         angle= angle + (rotationSpeed);
         
         //Movement
-        x = x +  (Math.cos(Math.toRadians(-angle)) * speed);
-        y = y +  (Math.sin(Math.toRadians(-angle)) * speed);
+        x = x +  (Math.cos(Math.toRadians(angle)) * speed);
+        y = y +  (Math.sin(Math.toRadians(angle)) * speed);
     }
     
     void keyPressed(KeyEvent e) {
@@ -76,7 +77,7 @@ public class Syringe extends Sprite{
             if(direction == Common.LEFT ){
                 direction = Common.RIGHT;
                 angle = Common.INIT_RANGLE;
-                x = Common.INIT_X_RPOSITION;
+                x = Common.INIT_X_RPOSITION - this.getImageHeight();
 
             }
             else if(direction == Common.RIGHT) {
@@ -103,7 +104,7 @@ public class Syringe extends Sprite{
         if(direction == Common.LEFT){
             x = Common.INIT_X_LPOSITION;        }
         else {
-            x = Common.INIT_X_RPOSITION;
+            x = Common.INIT_X_RPOSITION - this.getImageHeight();
         }
             y = Common.INIT_Y_GUN;
             speed = 0;
@@ -140,6 +141,23 @@ public class Syringe extends Sprite{
     
     int getDirection(){
         return direction;
+    }
+    
+    @Override
+    Rectangle getRect(){
+        Rectangle rect = new Rectangle((int)x,(int) y, 0, 0);
+        
+        rect.add(x +  (Math.cos(Math.toRadians(angle)) * this.getImageHeight()),
+                y +  (Math.sin(Math.toRadians(angle)) * this.getImageHeight()));
+        
+        rect.add((x +  (Math.cos(Math.toRadians(angle)) * this.getImageHeight()))
+                +  (Math.cos(Math.toRadians(angle-90)) * this.getImageWidth()),
+                (y +  (Math.sin(Math.toRadians(angle)) * this.getImageHeight())) 
+                        +  (Math.sin(Math.toRadians(angle-90)) * this.getImageWidth()));
+        
+        rect.add(x +  (Math.cos(Math.toRadians(angle-90)) * this.getImageWidth()), y +  (Math.sin(Math.toRadians(angle-90)) * this.getImageWidth()));
+                        
+        return rect;
     }
 }
 
