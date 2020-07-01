@@ -154,7 +154,6 @@ public class Level extends JPanel{
         if(gun.getRect().intersects(covid.getRect()))
         {
             nextLevel();
-            timer.stop();
 
         }else if(gun.getRect().intersects(scenario)){
             stopGame();
