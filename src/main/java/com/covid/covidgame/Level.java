@@ -8,10 +8,9 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
@@ -20,6 +19,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
+import javax.swing.ImageIcon;
 
 /**
  *
@@ -29,10 +29,11 @@ public class Level extends JPanel{
     private Timer timer;
     private boolean inGame = true;
     private Syringe gun;
+    private Virus covid;
     AffineTransform identity;
     
     
-    private Rectangle scenario = new Rectangle(Common.WIDTH - Common.SCENARIO_WIDTH, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
+    private final Rectangle scenario = new Rectangle(Common.WIDTH - Common.SCENARIO_WIDTH, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
 
     public Level() {
         initLevel();
@@ -48,6 +49,7 @@ public class Level extends JPanel{
 
     private void gameInit() {
         gun = new Syringe();
+        covid = new Virus();
         timer = new Timer(Common.PERIOD, new GameCycle());
         timer.start();
     }
@@ -61,6 +63,9 @@ public class Level extends JPanel{
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
                 RenderingHints.VALUE_RENDER_QUALITY);
         
+        Image icon = new ImageIcon("src/resources/wallpaper.gif").getImage();
+        g2d.drawImage(icon,0,0,this);
+
         if (inGame) {
             drawObjects(g2d);
         } else {
@@ -73,8 +78,8 @@ public class Level extends JPanel{
 
     private void drawObjects(Graphics2D g2d) {
         drawScenario(g2d);
-
         drawGun(g2d);
+        drawCovid(g2d);
     // Rotate + translate
    
       //  g2d.drawImage(gun.getImage(), gun.getX(), gun.getY(),
@@ -82,9 +87,14 @@ public class Level extends JPanel{
     }
     
     private void drawGun(Graphics2D g2d){
+        AffineTransform oldXForm = g2d.getTransform();
+
         g2d.translate(gun.getX(), gun.getY());
         g2d.rotate(Math.toRadians(gun.getRotation()),gun.getImageHeight()/2,gun.getImageWidth()/2);
         g2d.drawImage(gun.getImage(),0,0,this);
+        
+        g2d.setTransform(oldXForm);
+
     }
     
     private void drawScenario(Graphics2D g2d){
@@ -95,6 +105,10 @@ public class Level extends JPanel{
 
     private void gameFinished(Graphics2D g2d) {
     }
+
+    private void drawCovid(Graphics2D g2d) {
+        g2d.drawImage(covid.getImage(), (int)covid.getX(), (int)covid.getY(),
+                covid.getImageWidth(), covid.getImageHeight(), this);    }
 
     private class TAdapter extends KeyAdapter {
         @Override
