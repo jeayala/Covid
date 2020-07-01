@@ -4,19 +4,16 @@
  * and open the template in the editor.
  */
 package com.covid.covidgame;
-
-import java.awt.Rectangle;
-import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
 
 /**
  *
  * @author jesus
  */
-public class Virus extends Sprite{
+public class Virus extends Sprite implements GameObject{
     private int angle;
     private int speed;
-    private int direction = Common.LEFT;
+    private int direction = Common.RIGHT;
     
     public Virus() {
         initVirus();
@@ -29,7 +26,6 @@ public class Virus extends Sprite{
         getImageDimensions();
         x = Common.INIT_X_RPOSITION - this.imageHeight;
         y = Common.INIT_Y_COVID;
-        //resetState();
     }
 
     private void loadImage() {
@@ -37,7 +33,8 @@ public class Virus extends Sprite{
         image = ii.getImage();
     }
 
-    void move() {
+    @Override
+    public void move() {
 
        //Movement
        
@@ -45,15 +42,7 @@ public class Virus extends Sprite{
 
     private void resetState() {
     }
-
-    void setXDir(double x) {
-        this.x = x;
-    }
-
-    void setYDir(double y) {
-
-        this.y = y;
-    }
+    
     
     void setRotation(int angle){
         this.angle = angle;
@@ -62,11 +51,6 @@ public class Virus extends Sprite{
     void setDirection(int direction){
         this.direction = direction;
     }
-
-    double getYDir() {
-
-        return y;
-    }
     
     double getRotation(){
         return angle;
@@ -74,6 +58,26 @@ public class Virus extends Sprite{
     
     int getDirection(){
         return direction;
+    }
+
+    @Override
+    public void nextLevel() {
+        changeDirection();
+        
+    }
+    
+    void changeDirection(){
+        if(direction == Common.LEFT ){
+                direction = Common.RIGHT;
+                angle = Common.INIT_RANGLE;
+                x = Common.INIT_X_RPOSITION - this.getImageHeight();
+
+            }
+            else if(direction == Common.RIGHT) {
+                direction = Common.LEFT;
+                angle = Common.INIT_LANGLE;
+                x = Common.INIT_X_LPOSITION;
+            }
     }
 }
 

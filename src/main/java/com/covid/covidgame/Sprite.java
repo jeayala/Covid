@@ -58,7 +58,7 @@ public class Sprite {
     Rectangle getRect() {
 
         return new Rectangle((int)x, (int)y,
-                image.getWidth(null), image.getHeight(null));
+                imageWidth, imageHeight);
     }
 
     void getImageDimensions() {

@@ -6,10 +6,7 @@
 package com.covid.covidgame;
 
 import java.awt.EventQueue;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 
 
 /**

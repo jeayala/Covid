@@ -30,4 +30,5 @@ public interface Common {
     int INIT_RANGLE = 180;
     
     int RANGE_DEGREES=75;
+    int OFFSET = 5;
 }

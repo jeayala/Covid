@@ -110,9 +110,21 @@ public class Level extends JPanel{
         g2d.drawImage(covid.getImage(), (int)covid.getX(), (int)covid.getY(),
                 covid.getImageWidth(), covid.getImageHeight(), this);    }
 
+    private void nextLevel() {
+        covid.nextLevel();
+        gun.nextLevel();
+    }
+
     private class TAdapter extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
+             int key = e.getKeyCode();
+
+        if (key == KeyEvent.VK_S) {
+            if(timer.isRunning())
+                timer.stop();
+            else timer.start();
+        }
             gun.keyPressed(e);
         }
     }
@@ -134,14 +146,17 @@ public class Level extends JPanel{
     }
 
     private void stopGame() {
-        inGame = false;
-        timer.stop();
+        gun.resetState();
     }
 
     private void checkCollision() {
         
-        if(gun.getRect().intersects(scenario))
+        if(gun.getRect().intersects(covid.getRect()))
         {
+            nextLevel();
+            timer.stop();
+
+        }else if(gun.getRect().intersects(scenario)){
             stopGame();
         }
         

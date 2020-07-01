@@ -12,7 +12,7 @@ import javax.swing.ImageIcon;
  *
  * @author jesus
  */
-public class Syringe extends Sprite{
+public class Syringe extends Sprite implements GameObject{
     private int angle;
     private int speed;
     private int rotationSpeed = 1;
@@ -37,7 +37,8 @@ public class Syringe extends Sprite{
         image = ii.getImage();
     }
 
-    void move() {
+    @Override
+    public void move() {
 
         //Rotation
         if(direction == Common.LEFT ){
@@ -84,22 +85,35 @@ public class Syringe extends Sprite{
                 direction = Common.LEFT;
                 angle = Common.INIT_LANGLE;
                 x = Common.INIT_X_LPOSITION;
-
             }
         }
         
         if(key == KeyEvent.VK_SPACE){
             if(rotationSpeed!=0){
                 rotationSpeed = 0;
-                speed = 2;
+                speed = 3;
             }
             else {
                 resetState();
             }
         }
     }
+    
+    void changeDirection(){
+        if(direction == Common.LEFT ){
+                direction = Common.RIGHT;
+                angle = Common.INIT_RANGLE;
+                x = Common.INIT_X_RPOSITION - this.getImageHeight();
 
-    private void resetState() {
+            }
+            else if(direction == Common.RIGHT) {
+                direction = Common.LEFT;
+                angle = Common.INIT_LANGLE;
+                x = Common.INIT_X_LPOSITION;
+            }
+    }
+
+    void resetState() {
 
         if(direction == Common.LEFT){
             x = Common.INIT_X_LPOSITION;        }
@@ -112,15 +126,6 @@ public class Syringe extends Sprite{
 
 
     }
-
-    void setXDir(double x) {
-        this.x = x;
-    }
-
-    void setYDir(double y) {
-
-        this.y = y;
-    }
     
     void setRotation(int angle){
         this.angle = angle;
@@ -128,11 +133,6 @@ public class Syringe extends Sprite{
     
     void setDirection(int direction){
         this.direction = direction;
-    }
-
-    double getYDir() {
-
-        return y;
     }
     
     double getRotation(){
@@ -158,6 +158,12 @@ public class Syringe extends Sprite{
         rect.add(x +  (Math.cos(Math.toRadians(angle-90)) * this.getImageWidth()), y +  (Math.sin(Math.toRadians(angle-90)) * this.getImageWidth()));
                         
         return rect;
+    }
+
+    @Override
+    public void nextLevel() {
+        changeDirection();
+        resetState();
     }
 }
 
