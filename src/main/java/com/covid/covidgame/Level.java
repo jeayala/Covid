@@ -34,6 +34,8 @@ public class Level extends JPanel{
     
     
     private final Rectangle scenario = new Rectangle(Common.WIDTH - Common.SCENARIO_WIDTH, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
+    private final Rectangle scenario2 = new Rectangle(0 - Common.SCENARIO_WIDTH, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
+
 
     public Level() {
         initLevel();
@@ -63,6 +65,7 @@ public class Level extends JPanel{
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
                 RenderingHints.VALUE_RENDER_QUALITY);
         
+        //Fondo animado
         Image icon = new ImageIcon("src/resources/wallpaper.gif").getImage();
         g2d.drawImage(icon,0,0,this);
 
@@ -151,13 +154,12 @@ public class Level extends JPanel{
 
     private void checkCollision() {
         
-        if(gun.getRect().intersects(covid.getRect()))
-        {
+        if(gun.overlaps(covid)){
             nextLevel();
-
-        }else if(gun.getRect().intersects(scenario)){
-            stopGame();
         }
-        
+
+        else if(gun.getRect().intersects(scenario) || gun.getRect().intersects(scenario2)){
+            stopGame();
+        } 
     }
 }
