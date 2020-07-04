@@ -21,18 +21,13 @@ import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import javax.swing.ImageIcon;
 
-/**
- *
- * @author jesus
- */
 public class Level extends JPanel{
+    private final Boolean isDebugActive = false;
     private Timer timer;
     private boolean inGame = true;
     private Syringe gun;
     private Virus covid;
-    AffineTransform identity;
-    
-    
+
     private final Rectangle scenario = new Rectangle(Common.WIDTH - Common.SCENARIO_WIDTH, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
     private final Rectangle scenario2 = new Rectangle(0 - Common.SCENARIO_WIDTH, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
 
@@ -80,7 +75,7 @@ public class Level extends JPanel{
     }
 
     private void drawObjects(Graphics2D g2d) {
-        drawScenario(g2d);
+        //drawScenario(g2d);
         drawGun(g2d);
         drawCovid(g2d);
     // Rotate + translate
@@ -89,17 +84,7 @@ public class Level extends JPanel{
       //          gun.getImageWidth(), gun.getImageHeight(), this);
     }
     
-    private void drawGun(Graphics2D g2d){
-        AffineTransform oldXForm = g2d.getTransform();
-
-        g2d.translate(gun.getX(), gun.getY());
-        g2d.rotate(Math.toRadians(gun.getRotation()),gun.getImageHeight()/2,gun.getImageWidth()/2);
-        g2d.drawImage(gun.getImage(),0,0,this);
-        
-        g2d.setTransform(oldXForm);
-
-    }
-    
+   
     private void drawScenario(Graphics2D g2d){
         g2d.setPaint(Color.BLUE);
         g2d.fillRect(0, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
@@ -108,11 +93,49 @@ public class Level extends JPanel{
 
     private void gameFinished(Graphics2D g2d) {
     }
+    
+    private void drawGun(Graphics2D g2d){
+        g2d.setColor(Color.RED);
+        if(isDebugActive){
+            g2d.fill(gun.getPath());
+        }
+        gun.getPath();
+        AffineTransform oldXForm = g2d.getTransform();
+        g2d.setTransform(gun.getTransform());
+        g2d.drawImage(gun.getImage(),0,0,this);
+        g2d.setTransform(oldXForm);
+        
 
+        //g2d.setTransform(oldXForm);
+        
+//            AffineTransform at = new AffineTransform();
+//            int x = (int)gun.getX();
+//            int y = (int)gun.getY();
+//            at.translate(x, y);
+//            at.rotate(Math.toRadians(gun.getRotation()), gun.getImageWidth() / 2, gun.getImageWidth()/ 2);
+//            GeneralPath path1 = new GeneralPath();
+//            path1.append(new Rectangle(0,0,gun.getImageWidth(),gun.getImageWidth()).getPathIterator(at), true);
+//            g2d.fill(path1);
+//            g2d.setTransform(oldXForm);
+
+
+    }
+    
     private void drawCovid(Graphics2D g2d) {
-        g2d.drawImage(covid.getImage(), (int)covid.getX(), (int)covid.getY(),
-                covid.getImageWidth(), covid.getImageHeight(), this);    }
-
+        
+        if(isDebugActive){
+            g2d.fill(covid.getPath());
+        }
+        covid.getPath();
+        AffineTransform oldXForm = g2d.getTransform();
+        g2d.setTransform(covid.getTransform());
+        g2d.drawImage(covid.getImage(),0,0,this);
+        g2d.setTransform(oldXForm);
+        
+//        g2d.drawImage(covid.getImage(), (int)covid.getX(), (int)covid.getY(),
+//                covid.getImageWidth(), covid.getImageHeight(), this);   
+    }
+    
     private void nextLevel() {
         covid.nextLevel();
         gun.nextLevel();
@@ -154,7 +177,7 @@ public class Level extends JPanel{
 
     private void checkCollision() {
         
-        if(gun.overlaps(covid)){
+        if(gun.collides(covid)){
             nextLevel();
         }
 

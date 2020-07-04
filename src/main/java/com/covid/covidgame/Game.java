@@ -8,11 +8,6 @@ package com.covid.covidgame;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 
-
-/**
- *
- * @author jesus
- */
 public class Game extends JFrame {
 
     /**

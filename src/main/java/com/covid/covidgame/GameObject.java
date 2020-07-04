@@ -5,10 +5,6 @@
  */
 package com.covid.covidgame;
 
-/**
- *
- * @author jesus
- */
 public interface GameObject {
     void nextLevel();
     void move();

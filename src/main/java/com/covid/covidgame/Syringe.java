@@ -4,18 +4,15 @@
  * and open the template in the editor.
  */
 package com.covid.covidgame;
-import java.awt.Point;
-import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
-import java.awt.geom.Area;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import javax.swing.ImageIcon;
 
 public class Syringe extends Sprite implements GameObject{
-    private int angle;
     private int speed;
-    private int rotationSpeed = 1;
-    
+    private int rotationMovement = 1;    
     private int direction = Common.LEFT;
     
     public Syringe() {
@@ -42,20 +39,19 @@ public class Syringe extends Sprite implements GameObject{
         if(direction == Common.LEFT ){
             if(Common.INIT_LANGLE + Common.RANGE_DEGREES <= angle 
                     || Common.INIT_LANGLE - Common.RANGE_DEGREES >= angle){
-               rotationSpeed = rotationSpeed * -1;
+               rotationMovement = rotationMovement * -1;
             }
         }
         else if(direction == Common.RIGHT) {
             if(Common.INIT_RANGLE + Common.RANGE_DEGREES <= angle || Common.INIT_RANGLE - Common.RANGE_DEGREES >= angle){
-               rotationSpeed = rotationSpeed * -1;
+               rotationMovement = rotationMovement * -1;
             }
         }
         
-        angle= angle + (rotationSpeed);
-        
-        //Movement
-        x = x +  (Math.cos(Math.toRadians(angle)) * speed);
-        y = y +  (Math.sin(Math.toRadians(angle)) * speed);
+        angle= angle + (rotationMovement);
+        x=x + (Math.cos(Math.toRadians(angle))* speed);
+        y=y + (Math.sin(Math.toRadians(angle))* speed);
+
     }
     
     void keyPressed(KeyEvent e) {
@@ -68,8 +64,8 @@ public class Syringe extends Sprite implements GameObject{
         }
         
         if(key == KeyEvent.VK_SPACE){
-            if(rotationSpeed!=0){
-                rotationSpeed = 0;
+            if(rotationMovement!=0){
+                rotationMovement = 0;
                 speed = 3;
             }
             else {
@@ -82,7 +78,7 @@ public class Syringe extends Sprite implements GameObject{
         if(direction == Common.LEFT ){
                 direction = Common.RIGHT;
                 angle = Common.INIT_RANGLE;
-                x = Common.INIT_X_RPOSITION - this.getImageHeight();
+                x = Common.INIT_X_RPOSITION - this.getImageWidth();
 
             }
             else if(direction == Common.RIGHT) {
@@ -97,17 +93,13 @@ public class Syringe extends Sprite implements GameObject{
         if(direction == Common.LEFT){
             x = Common.INIT_X_LPOSITION;        }
         else {
-            x = Common.INIT_X_RPOSITION - this.getImageHeight();
+            x = Common.INIT_X_RPOSITION - this.getImageWidth();
         }
             y = Common.INIT_Y_GUN;
             speed = 0;
-            rotationSpeed = 1;
+            rotationMovement = 1;
 
 
-    }
-    
-    double getRotation(){
-        return angle;
     }
     
     int getDirection(){
@@ -115,68 +107,19 @@ public class Syringe extends Sprite implements GameObject{
     }
     
     @Override
-    Rectangle getRect(){
-        Rectangle rect = new Rectangle((int)x,(int) y, 0, 0);
-        
-        rect.add(x +  (Math.cos(Math.toRadians(angle)) * this.getImageHeight()),
-                y +  (Math.sin(Math.toRadians(angle)) * this.getImageHeight()));
-        
-        rect.add((x +  (Math.cos(Math.toRadians(angle)) * this.getImageHeight()))
-                +  (Math.cos(Math.toRadians(angle-90)) * this.getImageWidth()),
-                (y +  (Math.sin(Math.toRadians(angle)) * this.getImageHeight())) 
-                        +  (Math.sin(Math.toRadians(angle-90)) * this.getImageWidth()));
-        
-        rect.add(x +  (Math.cos(Math.toRadians(angle-90)) * this.getImageWidth()),
-                y +  (Math.sin(Math.toRadians(angle-90)) * this.getImageWidth()));
-                        
-        return rect;
-    }
-    
-    Point getTopLeft(){
-        return new Point((int)x,(int) y);
-    }
-    
-    Point getTopRight(){
-        return new Point((int)x +  (int)(Math.cos(Math.toRadians(angle)) * this.getImageHeight()),
-                (int)y +  (int)(Math.sin(Math.toRadians(angle)) * this.getImageHeight()));
-    }
-    
-    Point getBottomRight(){
-        return new Point((int)(x +  (Math.cos(Math.toRadians(angle)) * this.getImageHeight()))
-                +  (int)(Math.cos(Math.toRadians(angle-90)) * this.getImageWidth()),
-                (int)(y +  (Math.sin(Math.toRadians(angle)) * this.getImageHeight())) 
-                        +  (int)(Math.sin(Math.toRadians(angle-90)) * this.getImageWidth()));
-    }
-    
-    Point getBottomLeft(){
-        return new Point((int)x +  (int)(Math.cos(Math.toRadians(angle-90)) * this.getImageWidth()),
-                (int)y +  (int)(Math.sin(Math.toRadians(angle-90)) * this.getImageWidth()));
-    }
-
-    @Override
     public void nextLevel() {
         changeDirection();
         resetState();
     }
     
-    public boolean overlaps(Virus other){
-        Polygon polygon1;
-        Polygon polygon2;
-        int nShape1 = 4;
-        int xPoly1[] = {this.getTopLeft().x,this.getTopRight().x,this.getBottomRight().x,this.getBottomLeft().x};
-        int yPoly1[] = {this.getTopLeft().y,this.getTopRight().y,this.getBottomRight().y,this.getBottomLeft().y};
-        polygon1 = new Polygon(xPoly1,yPoly1,nShape1);
+    @Override
+    public GeneralPath getPath() {
+        transform = new AffineTransform();
+        transform.translate(x, y);
+        transform.rotate(Math.toRadians(getRotation()), getImageWidth() / 2, getImageWidth()/ 2);
+        path = new GeneralPath();
+        path.append(new Rectangle(0,getImageWidth()/4,getImageWidth(),getImageWidth()/2).getPathIterator(transform), true);
 
-        int nShape2 = 4;
-        int xPoly2[] = {other.getTopLeft().x,other.getTopRight().x,other.getBottomRight().x,other.getBottomLeft().x};
-        int yPoly2[] = {other.getTopLeft().y,other.getTopRight().y,other.getBottomRight().y,other.getBottomLeft().y};
-        polygon2 = new Polygon(xPoly2,yPoly2,nShape2);
-        
-        Area area = new Area(polygon1);
-        area.intersect(new Area(polygon2));
-        
-        return!area.isEmpty();
-
+        return path;    
     }
-    
 }

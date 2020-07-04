@@ -5,10 +5,6 @@
  */
 package com.covid.covidgame;
 
-/**
- *
- * @author jesus
- */
 public interface Common {
     int WIDTH = 300;
     int HEIGHT = 400;
