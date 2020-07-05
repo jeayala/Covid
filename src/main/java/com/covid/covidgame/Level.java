@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.covid.covidgame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -22,12 +17,12 @@ import java.awt.geom.AffineTransform;
 import javax.swing.ImageIcon;
 
 public class Level extends JPanel{
+    
     private final Boolean isDebugActive = false;
     private Timer timer;
-    private boolean inGame = true;
     private Syringe gun;
     private Virus covid;
-    private int score = 0;
+    private Common.GAME_STATE currentState= Common.GAME_STATE.INGAME;
 
     private final Rectangle scenario = new Rectangle(Common.WIDTH - Common.SCENARIO_WIDTH, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
     private final Rectangle scenario2 = new Rectangle(0 - Common.SCENARIO_WIDTH, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
@@ -65,8 +60,8 @@ public class Level extends JPanel{
         Image icon = new ImageIcon("src/resources/wallpaper.gif").getImage();
         g2d.drawImage(icon,0,0,this);
 
-        if (inGame) {
-            drawObjects(g2d);
+        if (currentState == Common.GAME_STATE.INGAME) {
+            drawGaming(g2d);
         } else {
 
             gameFinished(g2d);
@@ -75,7 +70,7 @@ public class Level extends JPanel{
         Toolkit.getDefaultToolkit().sync();
     }
 
-    private void drawObjects(Graphics2D g2d) {
+    private void drawGaming(Graphics2D g2d) {
         //drawScenario(g2d);
         drawScore(g2d);
         drawGun(g2d);
@@ -123,13 +118,13 @@ public class Level extends JPanel{
     }
     
     private void nextLevel() {
-        score++;
+        Common.SCORE++;
         covid.nextLevel();
         gun.nextLevel();
     }
 
     private void drawScore(Graphics2D g2d) {
-        String text = "SCORE: " + String.valueOf(score);
+        String text = "SCORE: " + String.valueOf(Common.SCORE);
         g2d.setColor(Color.BLACK);
         g2d.drawString(text, (Common.WIDTH/2) - text.length()*4, 10);
     }
@@ -168,19 +163,22 @@ public class Level extends JPanel{
     private void stopGame() {
         gun.resetState();
         covid.resetState();
-        score = 0;
+        Common.SCORE = 0;
     }
     
     private void loseLevel() {
         gun.resetState();
         covid.resetState();
-        score = 0;
+        Common.SCORE = 0;
     }
 
     private void checkCollision() {
         
         if(gun.collides(covid)){
             nextLevel();
+        }
+        else if(gun.collidesWithBordes()){
+            loseLevel();
         }
 
 //        else if(gun.getRect().intersects(scenario) || gun.getRect().intersects(scenario2)){

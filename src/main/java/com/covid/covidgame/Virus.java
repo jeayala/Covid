@@ -1,15 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.covid.covidgame;
 import java.util.concurrent.ThreadLocalRandom;
-import javax.swing.ImageIcon;
 
 public class Virus extends Sprite implements GameObject{
     private int speed;
-    private int direction = Common.RIGHT;
+    private Common.DIRECTION direction = Common.DIRECTION.RIGHT;
     
     public Virus() {
         initVirus();
@@ -30,10 +24,12 @@ public class Virus extends Sprite implements GameObject{
     }
 
     void resetState() {
-    }
-    
-    int getDirection(){
-        return direction;
+        if(direction == Common.DIRECTION.LEFT){
+            x = Common.INIT_X_LPOSITION;        }
+        else {
+            x = Common.INIT_X_RPOSITION - this.getImageWidth();
+        }
+            y = Common.INIT_Y_COVID;
     }
 
     @Override
@@ -41,14 +37,15 @@ public class Virus extends Sprite implements GameObject{
         changeDirection();
     }
     
-    void changeDirection(){
-        if(direction == Common.LEFT ){
-                direction = Common.RIGHT;
+    @Override
+    public void changeDirection(){
+        if(direction == Common.DIRECTION.LEFT ){
+                direction = Common.DIRECTION.RIGHT;
                 angle = Common.INIT_LANGLE;
                 x = Common.INIT_X_RPOSITION - this.getImageWidth();
             }
-            else if(direction == Common.RIGHT) {
-                direction = Common.LEFT;
+            else if(direction == Common.DIRECTION.RIGHT) {
+                direction = Common.DIRECTION.LEFT;
                 angle = Common.INIT_RANGLE;
                 x = Common.INIT_X_LPOSITION;
             }

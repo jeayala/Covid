@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.covid.covidgame;
 
 import java.awt.Image;
@@ -102,5 +97,9 @@ public class Sprite {
         image = ii.getImage();
         
         getImageDimensions();
+    }
+    
+    boolean collidesWithBordes() {
+        return x + imageWidth>Common.INIT_X_RPOSITION || y > Common.HEIGHT || x < Common.INIT_X_LPOSITION || y < 0;
     }
 }
