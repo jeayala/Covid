@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package com.covid.covidgame;
+import java.util.concurrent.ThreadLocalRandom;
 import javax.swing.ImageIcon;
 
 public class Virus extends Sprite implements GameObject{
@@ -15,16 +16,10 @@ public class Virus extends Sprite implements GameObject{
     }
 
     private void initVirus() {
-        loadImage();
-        getImageDimensions();
+        loadImage("src/resources/virus.png");
         angle = Common.INIT_LANGLE; 
         x = Common.INIT_X_RPOSITION - this.imageWidth;
         y = Common.INIT_Y_COVID;
-    }
-
-    private void loadImage() {
-        var ii = new ImageIcon("src/resources/virus.png");
-        image = ii.getImage();
     }
 
     @Override
@@ -34,7 +29,7 @@ public class Virus extends Sprite implements GameObject{
        
     }
 
-    private void resetState() {
+    void resetState() {
     }
     
     int getDirection(){
@@ -44,7 +39,6 @@ public class Virus extends Sprite implements GameObject{
     @Override
     public void nextLevel() {
         changeDirection();
-        
     }
     
     void changeDirection(){
@@ -52,12 +46,12 @@ public class Virus extends Sprite implements GameObject{
                 direction = Common.RIGHT;
                 angle = Common.INIT_LANGLE;
                 x = Common.INIT_X_RPOSITION - this.getImageWidth();
-
             }
             else if(direction == Common.RIGHT) {
                 direction = Common.LEFT;
                 angle = Common.INIT_RANGLE;
                 x = Common.INIT_X_LPOSITION;
             }
+        y = ThreadLocalRandom.current().nextInt(0,Common.HEIGHT - Common.HEIGHT/5  );
     }
 }

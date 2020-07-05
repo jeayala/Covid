@@ -4,10 +4,12 @@
  * and open the template in the editor.
  */
 package com.covid.covidgame;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
+import java.util.concurrent.ThreadLocalRandom;
 import javax.swing.ImageIcon;
 
 public class Syringe extends Sprite implements GameObject{
@@ -20,16 +22,10 @@ public class Syringe extends Sprite implements GameObject{
     }
 
     private void initGun() {
+        loadImage("src/resources/vacuna.png");        
         angle = Common.INIT_LANGLE; 
         x = Common.INIT_X_LPOSITION;
         y = Common.INIT_Y_GUN;
-        loadImage();
-        getImageDimensions();
-    }
-
-    private void loadImage() {
-        var ii = new ImageIcon("src/resources/vacuna.png");
-        image = ii.getImage();
     }
 
     @Override
@@ -79,13 +75,15 @@ public class Syringe extends Sprite implements GameObject{
                 direction = Common.RIGHT;
                 angle = Common.INIT_RANGLE;
                 x = Common.INIT_X_RPOSITION - this.getImageWidth();
-
             }
             else if(direction == Common.RIGHT) {
                 direction = Common.LEFT;
                 angle = Common.INIT_LANGLE;
                 x = Common.INIT_X_LPOSITION;
             }
+        y = ThreadLocalRandom.current().nextInt(0,Common.HEIGHT - Common.HEIGHT/5  );
+
+
     }
 
     void resetState() {

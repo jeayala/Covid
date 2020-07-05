@@ -27,6 +27,7 @@ public class Level extends JPanel{
     private boolean inGame = true;
     private Syringe gun;
     private Virus covid;
+    private int score = 0;
 
     private final Rectangle scenario = new Rectangle(Common.WIDTH - Common.SCENARIO_WIDTH, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
     private final Rectangle scenario2 = new Rectangle(0 - Common.SCENARIO_WIDTH, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
@@ -76,6 +77,7 @@ public class Level extends JPanel{
 
     private void drawObjects(Graphics2D g2d) {
         //drawScenario(g2d);
+        drawScore(g2d);
         drawGun(g2d);
         drawCovid(g2d);
     // Rotate + translate
@@ -104,25 +106,9 @@ public class Level extends JPanel{
         g2d.setTransform(gun.getTransform());
         g2d.drawImage(gun.getImage(),0,0,this);
         g2d.setTransform(oldXForm);
-        
-
-        //g2d.setTransform(oldXForm);
-        
-//            AffineTransform at = new AffineTransform();
-//            int x = (int)gun.getX();
-//            int y = (int)gun.getY();
-//            at.translate(x, y);
-//            at.rotate(Math.toRadians(gun.getRotation()), gun.getImageWidth() / 2, gun.getImageWidth()/ 2);
-//            GeneralPath path1 = new GeneralPath();
-//            path1.append(new Rectangle(0,0,gun.getImageWidth(),gun.getImageWidth()).getPathIterator(at), true);
-//            g2d.fill(path1);
-//            g2d.setTransform(oldXForm);
-
-
     }
     
     private void drawCovid(Graphics2D g2d) {
-        
         if(isDebugActive){
             g2d.fill(covid.getPath());
         }
@@ -137,8 +123,15 @@ public class Level extends JPanel{
     }
     
     private void nextLevel() {
+        score++;
         covid.nextLevel();
         gun.nextLevel();
+    }
+
+    private void drawScore(Graphics2D g2d) {
+        String text = "SCORE: " + String.valueOf(score);
+        g2d.setColor(Color.BLACK);
+        g2d.drawString(text, (Common.WIDTH/2) - text.length()*4, 10);
     }
 
     private class TAdapter extends KeyAdapter {
@@ -168,11 +161,20 @@ public class Level extends JPanel{
         gun.move();
 
         checkCollision();
+        
         repaint();
     }
 
     private void stopGame() {
         gun.resetState();
+        covid.resetState();
+        score = 0;
+    }
+    
+    private void loseLevel() {
+        gun.resetState();
+        covid.resetState();
+        score = 0;
     }
 
     private void checkCollision() {
@@ -181,8 +183,8 @@ public class Level extends JPanel{
             nextLevel();
         }
 
-        else if(gun.getRect().intersects(scenario) || gun.getRect().intersects(scenario2)){
-            stopGame();
-        } 
+//        else if(gun.getRect().intersects(scenario) || gun.getRect().intersects(scenario2)){
+//            loseLevel();
+//        } 
     }
 }

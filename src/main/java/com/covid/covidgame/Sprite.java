@@ -10,6 +10,7 @@ import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.GeneralPath;
+import javax.swing.ImageIcon;
 
 public class Sprite {
 
@@ -94,5 +95,12 @@ public class Sprite {
         a2.intersect(a1);
             
         return !a2.isEmpty();
+    }
+    
+    void loadImage(String url) {
+        var ii = new ImageIcon(url);
+        image = ii.getImage();
+        
+        getImageDimensions();
     }
 }
