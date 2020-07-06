@@ -3,6 +3,7 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -13,6 +14,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import javax.swing.ImageIcon;
 
@@ -22,7 +25,7 @@ public class Level extends JPanel{
     private Timer timer;
     private Syringe gun;
     private Virus covid;
-    private Common.GAME_STATE currentState= Common.GAME_STATE.INGAME;
+    private Common.GAME_STATE currentState= Common.GAME_STATE.MENU;
 
     private final Rectangle scenario = new Rectangle(Common.WIDTH - Common.SCENARIO_WIDTH, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
     private final Rectangle scenario2 = new Rectangle(0 - Common.SCENARIO_WIDTH, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
@@ -34,6 +37,8 @@ public class Level extends JPanel{
 
     private void initLevel() {
         addKeyListener(new TAdapter());
+        addMouseListener(new MAdapter());
+
         setFocusable(true);
         setPreferredSize(new Dimension(Common.WIDTH, Common.HEIGHT));
 
@@ -57,14 +62,15 @@ public class Level extends JPanel{
                 RenderingHints.VALUE_RENDER_QUALITY);
         
         //Fondo animado
-        Image icon = new ImageIcon("src/resources/wallpaper.gif").getImage();
+        Image icon = new ImageIcon("src/resources/wallpaper.jpg").getImage();
         g2d.drawImage(icon,0,0,this);
 
-        if (currentState == Common.GAME_STATE.INGAME) {
-            drawGaming(g2d);
-        } else {
+        switch (currentState) {
+            case INGAME -> drawGaming(g2d);
+            case MENU -> drawMenu(g2d);
+            case LOSE -> drawMenu(g2d);
 
-            gameFinished(g2d);
+            default -> gameFinished(g2d);
         }
 
         Toolkit.getDefaultToolkit().sync();
@@ -81,7 +87,6 @@ public class Level extends JPanel{
       //          gun.getImageWidth(), gun.getImageHeight(), this);
     }
     
-   
     private void drawScenario(Graphics2D g2d){
         g2d.setPaint(Color.BLUE);
         g2d.fillRect(0, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
@@ -124,9 +129,32 @@ public class Level extends JPanel{
     }
 
     private void drawScore(Graphics2D g2d) {
-        String text = "SCORE: " + String.valueOf(Common.SCORE);
+        Font f0 = new Font("arial",Font.BOLD,20);
+        String text = "PUNTUACIÓN: " + String.valueOf(Common.SCORE);
+        g2d.setFont(f0);
+        g2d.setColor(Color.WHITE);
+        g2d.drawString(text, (Common.WIDTH/3), 30);
+    }
+
+    private void drawMenu(Graphics2D g2d) {
         g2d.setColor(Color.BLACK);
-        g2d.drawString(text, (Common.WIDTH/2) - text.length()*4, 10);
+        g2d.fillRect(0, 0, Common.WIDTH, Common.HEIGHT);
+        
+        g2d.setColor(Color.WHITE);
+        Font f0 = new Font("arial",Font.BOLD,25);        
+        g2d.setFont(f0);
+        if(currentState == Common.GAME_STATE.MENU)
+            g2d.drawString(Common.TITLE, Common.WIDTH/4, (Common.HEIGHT/3)/2);
+        else if (currentState == Common.GAME_STATE.LOSE)
+            g2d.drawString("PERDISTE, PUNTAJE DE: " + Common.SCORE, Common.WIDTH/9, (Common.HEIGHT/3)/2);
+
+        
+        g2d.drawRect(Common.WIDTH/3, Common.HEIGHT/3, Common.WIDTH/3, Common.HEIGHT/6);
+        g2d.drawString("JUGAR", Common.WIDTH/3 + 30, (Common.HEIGHT/3) + 42);
+
+        g2d.drawRect(Common.WIDTH/3, (Common.HEIGHT/3)* 2, Common.WIDTH/3, Common.HEIGHT/6);
+        g2d.drawString("SALIR", Common.WIDTH/3 + 30, ((Common.HEIGHT/3)* 2) + 42);
+
     }
 
     private class TAdapter extends KeyAdapter {
@@ -135,11 +163,29 @@ public class Level extends JPanel{
              int key = e.getKeyCode();
 
         if (key == KeyEvent.VK_S) {
-            if(timer.isRunning())
-                timer.stop();
-            else timer.start();
+            if(currentState!= Common.GAME_STATE.MENU)
+                currentState = Common.GAME_STATE.MENU;
+            else currentState = Common.GAME_STATE.INGAME;
         }
+        if(currentState == Common.GAME_STATE.INGAME)
             gun.keyPressed(e);
+        }
+    }
+    
+    private class MAdapter extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if(currentState == Common.GAME_STATE.MENU || currentState == Common.GAME_STATE.LOSE){
+             Rectangle r1 = new Rectangle(Common.WIDTH/3, Common.HEIGHT/3, Common.WIDTH/3, Common.HEIGHT/6);
+             Rectangle r2 = new Rectangle (Common.WIDTH/3, (Common.HEIGHT/3)* 2, Common.WIDTH/3, Common.HEIGHT/6);
+             
+             Rectangle mouseRect = new Rectangle(e.getX(),e.getY(),1,1);
+             
+             if(r1.contains(mouseRect))
+                 currentState = Common.GAME_STATE.INGAME;
+             if (r2.contains(mouseRect))
+                 System.exit(0);
+            }
         }
     }
 
@@ -153,23 +199,18 @@ public class Level extends JPanel{
     }
 
     private void doGameCycle() {
-        gun.move();
-
-        checkCollision();
-        
-        repaint();
+        if(currentState == Common.GAME_STATE.INGAME){
+            gun.move();
+            checkCollision();
+            repaint();
+        }
     }
 
-    private void stopGame() {
-        gun.resetState();
-        covid.resetState();
-        Common.SCORE = 0;
-    }
-    
     private void loseLevel() {
         gun.resetState();
         covid.resetState();
         Common.SCORE = 0;
+        currentState = Common.GAME_STATE.LOSE;
     }
 
     private void checkCollision() {
@@ -180,9 +221,5 @@ public class Level extends JPanel{
         else if(gun.collidesWithBordes()){
             loseLevel();
         }
-
-//        else if(gun.getRect().intersects(scenario) || gun.getRect().intersects(scenario2)){
-//            loseLevel();
-//        } 
     }
 }

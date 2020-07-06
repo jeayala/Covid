@@ -9,11 +9,9 @@ public class Game extends JFrame {
     }
     
     private void initUI() {
-        
         add(new Level());
         setTitle(Common.TITLE);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
         setResizable(false);
         pack();
     }
@@ -21,6 +19,7 @@ public class Game extends JFrame {
         EventQueue.invokeLater(() -> {
 
             var game = new Game();
+            game.setLocationRelativeTo(null);
             game.setVisible(true);
         });
     }

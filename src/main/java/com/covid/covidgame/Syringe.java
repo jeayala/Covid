@@ -6,7 +6,7 @@ import java.awt.geom.GeneralPath;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Syringe extends Sprite implements GameObject{
-    private int speed;
+    private double speed;
     private int rotationMovement = 1;    
     private Common.DIRECTION direction = Common.DIRECTION.LEFT;
     
@@ -15,7 +15,7 @@ public class Syringe extends Sprite implements GameObject{
     }
 
     private void initGun() {
-        loadImage("src/resources/vacuna.png");        
+        loadImage("src/resources/jeringa.gif");        
         angle = Common.INIT_LANGLE; 
         x = Common.INIT_X_LPOSITION;
         y = Common.INIT_Y_GUN;
@@ -46,18 +46,11 @@ public class Syringe extends Sprite implements GameObject{
     void keyPressed(KeyEvent e) {
 
         int key = e.getKeyCode();
-        
-        if(key == KeyEvent.VK_SHIFT){
-            changeDirection();
-        }
-        
+               
         if(key == KeyEvent.VK_SPACE){
             if(rotationMovement!=0){
                 rotationMovement = 0;
                 speed = 3;
-            }
-            else {
-                resetState();
             }
         }
     }
@@ -102,7 +95,7 @@ public class Syringe extends Sprite implements GameObject{
         transform.translate(x, y);
         transform.rotate(Math.toRadians(getRotation()), getImageWidth() / 2, getImageWidth()/ 2);
         path = new GeneralPath();
-        path.append(new Rectangle(0,getImageWidth()/4,getImageWidth(),getImageWidth()/2).getPathIterator(transform), true);
+        path.append(new Rectangle(0,getImageWidth()/3,getImageWidth(),getImageWidth()/3).getPathIterator(transform), true);
 
         return path;    
     }

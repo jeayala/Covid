@@ -17,6 +17,10 @@ public class Sprite {
     AffineTransform transform;
     GeneralPath path;
     int angle;
+    
+    
+    int i = 0;
+    int j = 0;
 
     
     protected void setX(int x) {
@@ -92,13 +96,47 @@ public class Sprite {
         return !a2.isEmpty();
     }
     
-    void loadImage(String url) {
+    void loadImage(String url){
         var ii = new ImageIcon(url);
         image = ii.getImage();
         
         getImageDimensions();
     }
     
+//    void loadSpriteImage(String url) throws IOException{
+//        BufferedImage bigImg = ImageIO.read(new File("sheet.png"));
+//        
+//        final int width = 10;
+//        final int height = 10;
+//        final int rows = 5;
+//        final int cols = 5;
+//        BufferedImage[] sprites = new BufferedImage[rows * cols];
+//        
+//        image = sprites[(i * cols) + j] = bigImg.getSubimage(
+//                    j * width,
+//                    i * height,
+//                    width,
+//                    height
+//                );
+//        
+//        if(j<cols){
+//            j++;
+//        }
+//        else {
+//            j=0;
+//            i++;
+//            
+//            if(i<rows){
+//            i++;
+//            }
+//            else{
+//                i=0;
+//            }
+//        }
+//        
+//        
+//    }
+//    
     boolean collidesWithBordes() {
         return x + imageWidth>Common.INIT_X_RPOSITION || y > Common.HEIGHT || x < Common.INIT_X_LPOSITION || y < 0;
     }
