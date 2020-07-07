@@ -15,10 +15,12 @@ public class Syringe extends Sprite implements GameObject{
     }
 
     private void initGun() {
-        loadImage("src/resources/jeringa.gif");        
+        loadImage("src/resources/vacunaWithArrow.png");        
         angle = Common.INIT_LANGLE; 
         x = Common.INIT_X_LPOSITION;
         y = Common.INIT_Y_GUN;
+        this.imageHeight = 32;
+        this.imageWidth = 32;
     }
 
     @Override
@@ -51,6 +53,7 @@ public class Syringe extends Sprite implements GameObject{
             if(rotationMovement!=0){
                 rotationMovement = 0;
                 speed = 3;
+                loadImage("src/resources/vacuna.png");
             }
         }
     }
@@ -71,7 +74,9 @@ public class Syringe extends Sprite implements GameObject{
     }
 
     void resetState() {
-
+        loadImage("src/resources/vacunaWithArrow.png");        
+        this.imageHeight = 32;
+        this.imageWidth = 32;
         if(direction == Common.DIRECTION.LEFT){
             x = Common.INIT_X_LPOSITION;        }
         else {
@@ -84,6 +89,9 @@ public class Syringe extends Sprite implements GameObject{
     
     @Override
     public void nextLevel() {
+        loadImage("src/resources/vacunaWithArrow.png");        
+        this.imageHeight = 32;
+        this.imageWidth = 32;
         changeDirection();
         speed = 0;
         rotationMovement = 1;

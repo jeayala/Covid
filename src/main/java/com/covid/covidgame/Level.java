@@ -4,6 +4,7 @@ import javax.swing.Timer;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -20,17 +21,14 @@ import java.awt.geom.AffineTransform;
 import javax.swing.ImageIcon;
 
 public class Level extends JPanel{
-    
     private final Boolean isDebugActive = false;
     private Timer timer;
     private Syringe gun;
     private Virus covid;
     private Common.GAME_STATE currentState= Common.GAME_STATE.MENU;
-
     private final Rectangle scenario = new Rectangle(Common.WIDTH - Common.SCENARIO_WIDTH, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
     private final Rectangle scenario2 = new Rectangle(0 - Common.SCENARIO_WIDTH, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
-
-
+    
     public Level() {
         initLevel();
     }
@@ -61,23 +59,21 @@ public class Level extends JPanel{
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
                 RenderingHints.VALUE_RENDER_QUALITY);
         
-        //Fondo animado
+        drawScenario(g2d);
+
         Image icon = new ImageIcon("src/resources/wallpaper.jpg").getImage();
         g2d.drawImage(icon,0,0,this);
-
+        
         switch (currentState) {
             case INGAME -> drawGaming(g2d);
             case MENU -> drawMenu(g2d);
             case LOSE -> drawMenu(g2d);
-
-            default -> gameFinished(g2d);
         }
 
         Toolkit.getDefaultToolkit().sync();
     }
 
     private void drawGaming(Graphics2D g2d) {
-        //drawScenario(g2d);
         drawScore(g2d);
         drawGun(g2d);
         drawCovid(g2d);
@@ -89,13 +85,11 @@ public class Level extends JPanel{
     
     private void drawScenario(Graphics2D g2d){
         g2d.setPaint(Color.BLUE);
-        g2d.fillRect(0, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
-        g2d.fillRect(Common.WIDTH - Common.SCENARIO_WIDTH, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
+        g2d.fillRect(0, 0,Common.WIDTH, Common.HEIGHT);
+        //g2d.fillRect(0, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
+        //g2d.fillRect(Common.WIDTH - Common.SCENARIO_WIDTH, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
     }
-
-    private void gameFinished(Graphics2D g2d) {
-    }
-    
+ 
     private void drawGun(Graphics2D g2d){
         g2d.setColor(Color.RED);
         if(isDebugActive){
@@ -129,7 +123,7 @@ public class Level extends JPanel{
     }
 
     private void drawScore(Graphics2D g2d) {
-        Font f0 = new Font("arial",Font.BOLD,20);
+        Font f0 = new Font(Font.SANS_SERIF,Font.BOLD,20);
         String text = "PUNTUACIÓN: " + String.valueOf(Common.SCORE);
         g2d.setFont(f0);
         g2d.setColor(Color.WHITE);
@@ -141,19 +135,22 @@ public class Level extends JPanel{
         g2d.fillRect(0, 0, Common.WIDTH, Common.HEIGHT);
         
         g2d.setColor(Color.WHITE);
-        Font f0 = new Font("arial",Font.BOLD,25);        
+        Font f0 = new Font(Font.SANS_SERIF,Font.BOLD,25);        
         g2d.setFont(f0);
         if(currentState == Common.GAME_STATE.MENU)
             g2d.drawString(Common.TITLE, Common.WIDTH/4, (Common.HEIGHT/3)/2);
-        else if (currentState == Common.GAME_STATE.LOSE)
-            g2d.drawString("PERDISTE, PUNTAJE DE: " + Common.SCORE, Common.WIDTH/9, (Common.HEIGHT/3)/2);
-
+        else if (currentState == Common.GAME_STATE.LOSE){
+            g2d.drawString("RECORD: " + Common.BEST_SCORE, Common.WIDTH/4, (Common.HEIGHT/3)/2);
+            g2d.drawString("PUNTOS: " + Common.LAST_SCORE, Common.WIDTH/4, (Common.HEIGHT * 2/4)/2);
+        }
         
         g2d.drawRect(Common.WIDTH/3, Common.HEIGHT/3, Common.WIDTH/3, Common.HEIGHT/6);
-        g2d.drawString("JUGAR", Common.WIDTH/3 + 30, (Common.HEIGHT/3) + 42);
+        //g2d.drawString("JUGAR", Common.WIDTH/3 + 30, (Common.HEIGHT/3) + 42);
+        drawCenteredString(g2d,"JUGAR",new Rectangle(Common.WIDTH/3, Common.HEIGHT/3, Common.WIDTH/3, Common.HEIGHT/6),f0);
 
         g2d.drawRect(Common.WIDTH/3, (Common.HEIGHT/3)* 2, Common.WIDTH/3, Common.HEIGHT/6);
-        g2d.drawString("SALIR", Common.WIDTH/3 + 30, ((Common.HEIGHT/3)* 2) + 42);
+        drawCenteredString(g2d,"SALIR",new Rectangle(Common.WIDTH/3, (Common.HEIGHT/3)* 2, Common.WIDTH/3, Common.HEIGHT/6),f0);
+        //g2d.drawString("SALIR", Common.WIDTH/3 + 30, ((Common.HEIGHT/3)* 2) + 42);
 
     }
 
@@ -193,7 +190,6 @@ public class Level extends JPanel{
 
         @Override
         public void actionPerformed(ActionEvent e) {
-
             doGameCycle();
         }
     }
@@ -209,12 +205,14 @@ public class Level extends JPanel{
     private void loseLevel() {
         gun.resetState();
         covid.resetState();
+        if(Common.SCORE > Common.BEST_SCORE)
+            Common.BEST_SCORE = Common.SCORE;
+        Common.LAST_SCORE = Common.SCORE ;
         Common.SCORE = 0;
         currentState = Common.GAME_STATE.LOSE;
     }
 
     private void checkCollision() {
-        
         if(gun.collides(covid)){
             nextLevel();
         }
@@ -222,4 +220,12 @@ public class Level extends JPanel{
             loseLevel();
         }
     }
+    
+    public void drawCenteredString(Graphics g2d, String text, Rectangle rect, Font font) {
+    FontMetrics metrics = g2d.getFontMetrics(font);
+    int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
+    int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
+    g2d.setFont(font);
+    g2d.drawString(text, x, y);
+}
 }

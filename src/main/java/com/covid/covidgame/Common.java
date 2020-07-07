@@ -36,4 +36,8 @@ public class Common {
     }
     
     public static int SCORE = 0;
+    public static int LAST_SCORE = 0;    
+    public static int BEST_SCORE = 0;
+
+
 }
