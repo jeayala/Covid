@@ -18,7 +18,17 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.logging.Logger;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
 
 public class Level extends JPanel{
     private final Boolean isDebugActive = false;
@@ -34,6 +44,7 @@ public class Level extends JPanel{
     }
 
     private void initLevel() {
+        playMusic();
         addKeyListener(new TAdapter());
         addMouseListener(new MAdapter());
 
@@ -138,20 +149,18 @@ public class Level extends JPanel{
         Font f0 = new Font(Font.SANS_SERIF,Font.BOLD,25);        
         g2d.setFont(f0);
         if(currentState == Common.GAME_STATE.MENU)
-            g2d.drawString(Common.TITLE, Common.WIDTH/4, (Common.HEIGHT/3)/2);
+            drawCenteredString(g2d,Common.TITLE ,new Rectangle(0, (Common.HEIGHT/3)/2, Common.WIDTH, Common.HEIGHT/6),f0);
+
         else if (currentState == Common.GAME_STATE.LOSE){
-            g2d.drawString("RECORD: " + Common.BEST_SCORE, Common.WIDTH/4, (Common.HEIGHT/3)/2);
-            g2d.drawString("PUNTOS: " + Common.LAST_SCORE, Common.WIDTH/4, (Common.HEIGHT * 2/4)/2);
+            drawCenteredString(g2d,"RECORD: " + Common.BEST_SCORE ,new Rectangle(Common.WIDTH/3, (Common.HEIGHT/3) / 2, Common.WIDTH/3, Common.HEIGHT/6),f0);
+            drawCenteredString(g2d,"PUNTOS: " + Common.LAST_SCORE,new Rectangle(Common.WIDTH/3, (Common.HEIGHT * 2/4/3) / 2, Common.WIDTH/3, Common.HEIGHT/6),f0);
         }
         
         g2d.drawRect(Common.WIDTH/3, Common.HEIGHT/3, Common.WIDTH/3, Common.HEIGHT/6);
-        //g2d.drawString("JUGAR", Common.WIDTH/3 + 30, (Common.HEIGHT/3) + 42);
         drawCenteredString(g2d,"JUGAR",new Rectangle(Common.WIDTH/3, Common.HEIGHT/3, Common.WIDTH/3, Common.HEIGHT/6),f0);
 
         g2d.drawRect(Common.WIDTH/3, (Common.HEIGHT/3)* 2, Common.WIDTH/3, Common.HEIGHT/6);
         drawCenteredString(g2d,"SALIR",new Rectangle(Common.WIDTH/3, (Common.HEIGHT/3)* 2, Common.WIDTH/3, Common.HEIGHT/6),f0);
-        //g2d.drawString("SALIR", Common.WIDTH/3 + 30, ((Common.HEIGHT/3)* 2) + 42);
-
     }
 
     private class TAdapter extends KeyAdapter {
@@ -221,11 +230,27 @@ public class Level extends JPanel{
         }
     }
     
-    public void drawCenteredString(Graphics g2d, String text, Rectangle rect, Font font) {
-    FontMetrics metrics = g2d.getFontMetrics(font);
-    int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
-    int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
-    g2d.setFont(font);
-    g2d.drawString(text, x, y);
+    private void drawCenteredString(Graphics g2d, String text, Rectangle rect, Font font) {
+        FontMetrics metrics = g2d.getFontMetrics(font);
+        int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
+        int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
+        g2d.setFont(font);
+        g2d.drawString(text, x, y);
 }
+    
+    private void playMusic(){
+        try {
+        File file = new File("src/resources/music.wav");
+        Clip clip = AudioSystem.getClip();
+        
+        AudioInputStream ais = AudioSystem.getAudioInputStream(file);
+        clip.open(ais);
+        clip.loop(Clip.LOOP_CONTINUOUSLY);
+        SwingUtilities.invokeLater(() -> {
+        });
+    }
+         catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
+            Logger.getLogger(Level.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+    }
 }
