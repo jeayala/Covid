@@ -18,9 +18,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.logging.Logger;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -40,11 +38,11 @@ public class Level extends JPanel{
     private final Rectangle scenario2 = new Rectangle(0 - Common.SCENARIO_WIDTH, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
     
     public Level() {
+        playMusic();
         initLevel();
     }
 
     private void initLevel() {
-        playMusic();
         addKeyListener(new TAdapter());
         addMouseListener(new MAdapter());
 
@@ -70,11 +68,11 @@ public class Level extends JPanel{
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
                 RenderingHints.VALUE_RENDER_QUALITY);
         
+
+        Image icon = new ImageIcon(getClass().getClassLoader().getResource("wallpaper.jpg")).getImage();
+        g2d.drawImage(icon,0,0,this);
         drawScenario(g2d);
 
-        Image icon = new ImageIcon("src/resources/wallpaper.jpg").getImage();
-        g2d.drawImage(icon,0,0,this);
-        
         switch (currentState) {
             case INGAME -> drawGaming(g2d);
             case MENU -> drawMenu(g2d);
@@ -88,17 +86,15 @@ public class Level extends JPanel{
         drawScore(g2d);
         drawGun(g2d);
         drawCovid(g2d);
-    // Rotate + translate
-   
-      //  g2d.drawImage(gun.getImage(), gun.getX(), gun.getY(),
-      //          gun.getImageWidth(), gun.getImageHeight(), this);
     }
     
     private void drawScenario(Graphics2D g2d){
-        g2d.setPaint(Color.BLUE);
-        g2d.fillRect(0, 0,Common.WIDTH, Common.HEIGHT);
-        //g2d.fillRect(0, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
-        //g2d.fillRect(Common.WIDTH - Common.SCENARIO_WIDTH, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
+        //g2d.setPaint(Color.BLUE);
+        //g2d.fillRect(0, 0,Common.WIDTH, Common.HEIGHT);
+        g2d.setPaint(Color.RED);
+
+        g2d.fillRect(0, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
+        g2d.fillRect(Common.WIDTH - Common.SCENARIO_WIDTH, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
     }
  
     private void drawGun(Graphics2D g2d){
@@ -121,10 +117,7 @@ public class Level extends JPanel{
         AffineTransform oldXForm = g2d.getTransform();
         g2d.setTransform(covid.getTransform());
         g2d.drawImage(covid.getImage(),0,0,this);
-        g2d.setTransform(oldXForm);
-        
-//        g2d.drawImage(covid.getImage(), (int)covid.getX(), (int)covid.getY(),
-//                covid.getImageWidth(), covid.getImageHeight(), this);   
+        g2d.setTransform(oldXForm);   
     }
     
     private void nextLevel() {
@@ -240,10 +233,9 @@ public class Level extends JPanel{
     
     private void playMusic(){
         try {
-        File file = new File("src/resources/music.wav");
         Clip clip = AudioSystem.getClip();
         
-        AudioInputStream ais = AudioSystem.getAudioInputStream(file);
+        AudioInputStream ais = AudioSystem.getAudioInputStream(getClass().getClassLoader().getResourceAsStream("music.wav"));
         clip.open(ais);
         clip.loop(Clip.LOOP_CONTINUOUSLY);
         SwingUtilities.invokeLater(() -> {

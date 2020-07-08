@@ -80,7 +80,6 @@ public class Sprite {
     double getRotation(){
         return angle;
     }
-    
 
     void getImageDimensions() {
 
@@ -97,46 +96,10 @@ public class Sprite {
     }
     
     void loadImage(String url){
-        var ii = new ImageIcon(url);
-        image = ii.getImage();
-        
+        image = new ImageIcon(getClass().getClassLoader().getResource(url)).getImage();
         getImageDimensions();
     }
     
-//    void loadSpriteImage(String url) throws IOException{
-//        BufferedImage bigImg = ImageIO.read(new File("sheet.png"));
-//        
-//        final int width = 10;
-//        final int height = 10;
-//        final int rows = 5;
-//        final int cols = 5;
-//        BufferedImage[] sprites = new BufferedImage[rows * cols];
-//        
-//        image = sprites[(i * cols) + j] = bigImg.getSubimage(
-//                    j * width,
-//                    i * height,
-//                    width,
-//                    height
-//                );
-//        
-//        if(j<cols){
-//            j++;
-//        }
-//        else {
-//            j=0;
-//            i++;
-//            
-//            if(i<rows){
-//            i++;
-//            }
-//            else{
-//                i=0;
-//            }
-//        }
-//        
-//        
-//    }
-//    
     boolean collidesWithBordes() {
         return x + imageWidth>Common.INIT_X_RPOSITION || y > Common.HEIGHT || x < Common.INIT_X_LPOSITION || y < 0;
     }
