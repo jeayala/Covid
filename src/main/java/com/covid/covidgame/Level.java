@@ -37,7 +37,6 @@ public class Level extends JPanel{
     private Common.GAME_STATE currentState= Common.GAME_STATE.MENU;
     
     public Level() {
-        playMusic();
         initLevel();
     }
 
@@ -234,21 +233,5 @@ public class Level extends JPanel{
         int y = rect.y + ((rect.height - metrics.getHeight()) / 2) + metrics.getAscent();
         g2d.setFont(font);
         g2d.drawString(text, x, y);
-}
-    
-    //Musica de fondo
-    private void playMusic(){
-        try {
-        Clip clip = AudioSystem.getClip();
-        
-        AudioInputStream ais = AudioSystem.getAudioInputStream(getClass().getClassLoader().getResourceAsStream("music.wav"));
-        clip.open(ais);
-        clip.loop(Clip.LOOP_CONTINUOUSLY);
-        SwingUtilities.invokeLater(() -> {
-        });
-    }
-         catch (LineUnavailableException | UnsupportedAudioFileException | IOException ex) {
-            Logger.getLogger(Level.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
     }
 }
