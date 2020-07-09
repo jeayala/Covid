@@ -19,6 +19,7 @@ public class Syringe extends Sprite implements GameObject{
         angle = Common.INIT_LANGLE; 
         x = Common.INIT_X_LPOSITION;
         y = Common.INIT_Y_GUN;
+        //Valores manuales, para ignorar el "extra" de la flecha en el sprite
         this.imageHeight = 32;
         this.imageWidth = 32;
     }
@@ -52,6 +53,7 @@ public class Syringe extends Sprite implements GameObject{
         if(key == KeyEvent.VK_SPACE){
             if(rotationMovement!=0){
                 rotationMovement = 0;
+                //Velocidad a la que se mueve la vacuna
                 speed = 3;
                 loadImage("vacuna.png");
             }
@@ -97,6 +99,7 @@ public class Syringe extends Sprite implements GameObject{
         rotationMovement = 1;
     }
     
+    //Se ajusta el rectangulo de colision para hacerlo mas ajustado al sprite
     @Override
     public GeneralPath getPath() {
         transform = new AffineTransform();

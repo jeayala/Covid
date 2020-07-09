@@ -29,13 +29,12 @@ import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 
 public class Level extends JPanel{
+    //true para ver los cuadros colision
     private final Boolean isDebugActive = false;
     private Timer timer;
     private Syringe gun;
     private Virus covid;
     private Common.GAME_STATE currentState= Common.GAME_STATE.MENU;
-    private final Rectangle scenario = new Rectangle(Common.WIDTH - Common.SCENARIO_WIDTH, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
-    private final Rectangle scenario2 = new Rectangle(0 - Common.SCENARIO_WIDTH, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
     
     public Level() {
         playMusic();
@@ -43,6 +42,7 @@ public class Level extends JPanel{
     }
 
     private void initLevel() {
+        //Inicializa eventos de entrada
         addKeyListener(new TAdapter());
         addMouseListener(new MAdapter());
 
@@ -53,14 +53,17 @@ public class Level extends JPanel{
     }
 
     private void gameInit() {
+        //Inicializa objetos
         gun = new Syringe();
         covid = new Virus();
+        //Cada que ocurre el periodo de actualizacion, ejecuta GameCycle
         timer = new Timer(Common.PERIOD, new GameCycle());
         timer.start();
     }
 
     @Override
     public void paintComponent(Graphics g) {
+        //Lo que dibuja en cada ciclo
         super.paintComponent(g);
         var g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
@@ -69,7 +72,7 @@ public class Level extends JPanel{
                 RenderingHints.VALUE_RENDER_QUALITY);
         
 
-        Image icon = new ImageIcon(getClass().getClassLoader().getResource("wallpaper.jpg")).getImage();
+        Image icon = new ImageIcon(getClass().getClassLoader().getResource("wallpaper.png")).getImage();
         g2d.drawImage(icon,0,0,this);
         drawScenario(g2d);
 
@@ -89,9 +92,7 @@ public class Level extends JPanel{
     }
     
     private void drawScenario(Graphics2D g2d){
-        //g2d.setPaint(Color.BLUE);
-        //g2d.fillRect(0, 0,Common.WIDTH, Common.HEIGHT);
-        g2d.setPaint(Color.RED);
+        g2d.setPaint(Color.BLACK);
 
         g2d.fillRect(0, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
         g2d.fillRect(Common.WIDTH - Common.SCENARIO_WIDTH, 0,Common.SCENARIO_WIDTH, Common.HEIGHT);
@@ -128,10 +129,8 @@ public class Level extends JPanel{
 
     private void drawScore(Graphics2D g2d) {
         Font f0 = new Font(Font.SANS_SERIF,Font.BOLD,20);
-        String text = "PUNTUACIÓN: " + String.valueOf(Common.SCORE);
-        g2d.setFont(f0);
-        g2d.setColor(Color.WHITE);
-        g2d.drawString(text, (Common.WIDTH/3), 30);
+        g2d.setColor(Color.WHITE);        
+        drawCenteredString(g2d, "PUNTUACIÓN: " + String.valueOf(Common.SCORE),new Rectangle(0,30,Common.WIDTH,Common.HEIGHT/20),f0);
     }
 
     private void drawMenu(Graphics2D g2d) {
@@ -161,11 +160,13 @@ public class Level extends JPanel{
         public void keyPressed(KeyEvent e) {
              int key = e.getKeyCode();
 
+        //Pausa con tecla S
         if (key == KeyEvent.VK_S) {
             if(currentState!= Common.GAME_STATE.MENU)
                 currentState = Common.GAME_STATE.MENU;
             else currentState = Common.GAME_STATE.INGAME;
         }
+        //Envia tecla presionada a objeto
         if(currentState == Common.GAME_STATE.INGAME)
             gun.keyPressed(e);
         }
@@ -174,6 +175,7 @@ public class Level extends JPanel{
     private class MAdapter extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
+            //Evento mouse, clic a los botones
             if(currentState == Common.GAME_STATE.MENU || currentState == Common.GAME_STATE.LOSE){
              Rectangle r1 = new Rectangle(Common.WIDTH/3, Common.HEIGHT/3, Common.WIDTH/3, Common.HEIGHT/6);
              Rectangle r2 = new Rectangle (Common.WIDTH/3, (Common.HEIGHT/3)* 2, Common.WIDTH/3, Common.HEIGHT/6);
@@ -197,6 +199,7 @@ public class Level extends JPanel{
     }
 
     private void doGameCycle() {
+        //Mientras esta en juego, pinta 
         if(currentState == Common.GAME_STATE.INGAME){
             gun.move();
             checkCollision();
@@ -215,6 +218,7 @@ public class Level extends JPanel{
     }
 
     private void checkCollision() {
+        //Validacion de colisiones
         if(gun.collides(covid)){
             nextLevel();
         }
@@ -223,6 +227,7 @@ public class Level extends JPanel{
         }
     }
     
+    //Helper para escribir centrado
     private void drawCenteredString(Graphics g2d, String text, Rectangle rect, Font font) {
         FontMetrics metrics = g2d.getFontMetrics(font);
         int x = rect.x + (rect.width - metrics.stringWidth(text)) / 2;
@@ -231,6 +236,7 @@ public class Level extends JPanel{
         g2d.drawString(text, x, y);
 }
     
+    //Musica de fondo
     private void playMusic(){
         try {
         Clip clip = AudioSystem.getClip();

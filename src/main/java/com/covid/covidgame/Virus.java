@@ -2,7 +2,6 @@ package com.covid.covidgame;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Virus extends Sprite implements GameObject{
-    private int speed;
     private Common.DIRECTION direction = Common.DIRECTION.RIGHT;
     
     public Virus() {
@@ -18,9 +17,6 @@ public class Virus extends Sprite implements GameObject{
 
     @Override
     public void move() {
-
-       //Movement
-       
     }
 
     void resetState() {
@@ -42,7 +38,6 @@ public class Virus extends Sprite implements GameObject{
         if(direction == Common.DIRECTION.LEFT ){
                 loadImage("covidBlue.gif");
                 direction = Common.DIRECTION.RIGHT;
-                //angle = Common.INIT_LANGLE;
                 x = Common.INIT_X_RPOSITION - this.getImageWidth();
                 
             }
@@ -50,7 +45,6 @@ public class Virus extends Sprite implements GameObject{
                 loadImage("covidRed.gif");
 
                 direction = Common.DIRECTION.LEFT;
-                //angle = Common.INIT_RANGLE;
                 x = Common.INIT_X_LPOSITION;
             }
         y = ThreadLocalRandom.current().nextInt(0,Common.HEIGHT - Common.HEIGHT/5  );

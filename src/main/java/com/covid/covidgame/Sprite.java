@@ -62,15 +62,15 @@ public class Sprite {
         return new Rectangle(0, 0,
                 imageWidth, imageHeight);
     }
-
+    //Uso de affineTransform para manejar mejor las colisiones con objetos con angulos diferentes
     public GeneralPath getPath() {
-    transform = new AffineTransform();
-    transform.translate(x, y);
-    transform.rotate(Math.toRadians(getRotation()), getImageWidth() / 2, getImageHeight()/ 2);
-    path = new GeneralPath();
-    path.append(new Rectangle(0 + Common.OFFSET,0 + Common.OFFSET,getImageWidth() - Common.OFFSET * 2 ,getImageHeight() - Common.OFFSET * 2).getPathIterator(transform), true);
-    
-    return path;    
+        transform = new AffineTransform();
+        transform.translate(x, y);
+        transform.rotate(Math.toRadians(getRotation()), getImageWidth() / 2, getImageHeight()/ 2);
+        path = new GeneralPath();
+        path.append(new Rectangle(0 + Common.OFFSET,0 + Common.OFFSET,getImageWidth() - Common.OFFSET * 2 ,getImageHeight() - Common.OFFSET * 2).getPathIterator(transform), true);
+
+        return path;    
     }
     
     public AffineTransform getTransform(){
@@ -87,6 +87,7 @@ public class Sprite {
         imageHeight = image.getHeight(null);
     }
     
+    //Metodo para validar la colision entre 2 sprites
     Boolean collides(Sprite anotherOne){
         Area a1 = new Area(getPath());
         Area a2 = new Area(anotherOne.getPath());
