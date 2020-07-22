@@ -18,7 +18,7 @@ public class Game extends JFrame {
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
 
-            var game = new Game();
+            Game game = new Game();
             game.setLocationRelativeTo(null);
             game.setVisible(true);
         });

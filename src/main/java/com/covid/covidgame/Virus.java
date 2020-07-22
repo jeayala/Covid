@@ -9,7 +9,7 @@ public class Virus extends Sprite implements GameObject{
     }
 
     private void initVirus() {
-        loadImage("covidBlue.gif");
+        loadImage("covid.gif");
         angle = Common.INIT_LANGLE; 
         x = Common.INIT_X_RPOSITION - this.imageWidth;
         y = Common.INIT_Y_COVID;
@@ -36,13 +36,13 @@ public class Virus extends Sprite implements GameObject{
     @Override
     public void changeDirection(){
         if(direction == Common.DIRECTION.LEFT ){
-                loadImage("covidBlue.gif");
+                loadImage("covid.gif");
                 direction = Common.DIRECTION.RIGHT;
                 x = Common.INIT_X_RPOSITION - this.getImageWidth();
                 
             }
             else if(direction == Common.DIRECTION.RIGHT) {        
-                loadImage("covidRed.gif");
+                loadImage("covid.gif");
 
                 direction = Common.DIRECTION.LEFT;
                 x = Common.INIT_X_LPOSITION;

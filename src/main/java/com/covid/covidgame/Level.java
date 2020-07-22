@@ -4,6 +4,7 @@ import javax.swing.Timer;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontFormatException;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -20,13 +21,7 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.logging.Logger;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
-import javax.swing.SwingUtilities;
 
 public class Level extends JPanel{
     //true para ver los cuadros colision
@@ -35,6 +30,7 @@ public class Level extends JPanel{
     private Syringe gun;
     private Virus covid;
     private Common.GAME_STATE currentState= Common.GAME_STATE.MENU;
+    private Font font;
     
     public Level() {
         initLevel();
@@ -57,6 +53,12 @@ public class Level extends JPanel{
         covid = new Virus();
         //Cada que ocurre el periodo de actualizacion, ejecuta GameCycle
         timer = new Timer(Common.PERIOD, new GameCycle());
+        try {
+            font = Font.createFont(Font.TRUETYPE_FONT, getClass().getClassLoader().getResourceAsStream("font.ttf"));
+        } catch (FontFormatException | IOException ex) {
+            font = new Font(Font.SANS_SERIF,Font.BOLD,10);
+            Logger.getLogger(Level.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
         timer.start();
     }
 
@@ -64,21 +66,21 @@ public class Level extends JPanel{
     public void paintComponent(Graphics g) {
         //Lo que dibuja en cada ciclo
         super.paintComponent(g);
-        var g2d = (Graphics2D) g;
+        Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING,
                 RenderingHints.VALUE_RENDER_QUALITY);
         
 
-        Image icon = new ImageIcon(getClass().getClassLoader().getResource("wallpaper.png")).getImage();
+        Image icon = new ImageIcon(getClass().getClassLoader().getResource("wallpaper.jpg")).getImage();
         g2d.drawImage(icon,0,0,this);
-        drawScenario(g2d);
-
-        switch (currentState) {
-            case INGAME -> drawGaming(g2d);
-            case MENU -> drawMenu(g2d);
-            case LOSE -> drawMenu(g2d);
+        //drawScenario(g2d);
+        if(currentState == Common.GAME_STATE.INGAME){
+            drawGaming(g2d);
+        }
+        if(currentState == Common.GAME_STATE.MENU || currentState == Common.GAME_STATE.LOSE){
+            drawMenu(g2d);
         }
 
         Toolkit.getDefaultToolkit().sync();
@@ -127,17 +129,18 @@ public class Level extends JPanel{
     }
 
     private void drawScore(Graphics2D g2d) {
-        Font f0 = new Font(Font.SANS_SERIF,Font.BOLD,20);
+        Font f0 = font.deriveFont(Font.BOLD,20);
         g2d.setColor(Color.WHITE);        
         drawCenteredString(g2d, "PUNTUACIÓN: " + String.valueOf(Common.SCORE),new Rectangle(0,30,Common.WIDTH,Common.HEIGHT/20),f0);
     }
 
     private void drawMenu(Graphics2D g2d) {
-        g2d.setColor(Color.BLACK);
-        g2d.fillRect(0, 0, Common.WIDTH, Common.HEIGHT);
         
-        g2d.setColor(Color.WHITE);
-        Font f0 = new Font(Font.SANS_SERIF,Font.BOLD,25);        
+        Image icon = new ImageIcon(getClass().getClassLoader().getResource("menuWallpaper.jpg")).getImage();
+        g2d.drawImage(icon,0,0,this);
+
+        g2d.setColor(Color.BLACK);
+        Font f0 = font.deriveFont(Font.BOLD,25);        
         g2d.setFont(f0);
         if(currentState == Common.GAME_STATE.MENU)
             drawCenteredString(g2d,Common.TITLE ,new Rectangle(0, (Common.HEIGHT/3)/2, Common.WIDTH, Common.HEIGHT/6),f0);
@@ -147,11 +150,11 @@ public class Level extends JPanel{
             drawCenteredString(g2d,"PUNTOS: " + Common.LAST_SCORE,new Rectangle(Common.WIDTH/3, (Common.HEIGHT * 2/4/3) / 2, Common.WIDTH/3, Common.HEIGHT/6),f0);
         }
         
-        g2d.drawRect(Common.WIDTH/3, Common.HEIGHT/3, Common.WIDTH/3, Common.HEIGHT/6);
-        drawCenteredString(g2d,"JUGAR",new Rectangle(Common.WIDTH/3, Common.HEIGHT/3, Common.WIDTH/3, Common.HEIGHT/6),f0);
+        icon = new ImageIcon(getClass().getClassLoader().getResource("start.png")).getImage();
+        g2d.drawImage(icon,Common.WIDTH/3, Common.HEIGHT/3,this);
 
-        g2d.drawRect(Common.WIDTH/3, (Common.HEIGHT/3)* 2, Common.WIDTH/3, Common.HEIGHT/6);
-        drawCenteredString(g2d,"SALIR",new Rectangle(Common.WIDTH/3, (Common.HEIGHT/3)* 2, Common.WIDTH/3, Common.HEIGHT/6),f0);
+        icon = new ImageIcon(getClass().getClassLoader().getResource("quit.png")).getImage();
+        g2d.drawImage(icon,Common.WIDTH/3, (Common.HEIGHT/3)* 2,this);
     }
 
     private class TAdapter extends KeyAdapter {
